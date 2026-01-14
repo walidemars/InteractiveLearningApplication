@@ -1,6 +1,5 @@
 package com.nikitinsky.interactive.learning.app.data.repository
 
-import com.nikitinsky.interactive.learning.app.data.local.dao.WordDao
 import com.nikitinsky.interactive.learning.app.domain.model.MainMenuItem
 import com.nikitinsky.interactive.learning.app.domain.repository.MenuRepository
 import jakarta.inject.Inject

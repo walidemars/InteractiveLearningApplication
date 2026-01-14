@@ -1,7 +1,5 @@
 package com.nikitinsky.interactive.learning.app.domain.model
 
-import androidx.room.PrimaryKey
-
 data class KanaSymbol(
     val id: Int,
     val japaneseChar: String, // japanese

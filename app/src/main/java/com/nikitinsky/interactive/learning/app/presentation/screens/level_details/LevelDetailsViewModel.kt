@@ -1,6 +1,5 @@
 package com.nikitinsky.interactive.learning.app.presentation.screens.level_details
 
-import android.content.Context
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel

@@ -3,7 +3,6 @@ package com.nikitinsky.interactive.learning.app.data.repository
 import com.nikitinsky.interactive.learning.app.domain.model.KanaSymbol
 import com.nikitinsky.interactive.learning.app.domain.model.KanaType
 import com.nikitinsky.interactive.learning.app.domain.model.Level
-import com.nikitinsky.interactive.learning.app.domain.model.Word
 import com.nikitinsky.interactive.learning.app.domain.repository.KanaRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

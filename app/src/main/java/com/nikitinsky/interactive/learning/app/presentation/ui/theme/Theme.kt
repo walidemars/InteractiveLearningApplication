@@ -1,4 +1,4 @@
-package com.nikitinsky.interactive.learning.app.presentation.theme
+package com.nikitinsky.interactive.learning.app.presentation.ui.theme
 
 import android.os.Build
 import androidx.compose.material3.MaterialTheme

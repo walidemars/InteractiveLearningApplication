@@ -4,23 +4,28 @@ import android.content.Context
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.nikitinsky.interactive.learning.app.data.repository.TestKanaRepositoryImpl
 import com.nikitinsky.interactive.learning.app.domain.model.Level
+import com.nikitinsky.interactive.learning.app.domain.usecase.GetAllKanaByTypeUseCase
+import com.nikitinsky.interactive.learning.app.domain.usecase.GetAllLevelsByTypeUseCase
+import com.nikitinsky.interactive.learning.app.domain.usecase.GetKanaByIdUseCase
+import com.nikitinsky.interactive.learning.app.domain.usecase.GetKanaForLevelUseCase
+import com.nikitinsky.interactive.learning.app.domain.usecase.GetLevelUseCase
+import com.nikitinsky.interactive.learning.app.domain.usecase.GetWordByIdUseCase
+import com.nikitinsky.interactive.learning.app.domain.usecase.GetWordsForLevelUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class LevelsMenuViewModel(context: Context): ViewModel() {
-
-    private val _levelsState = mutableStateOf<List<Level>>(emptyList())
-    val levelsState: State<List<Level>> = _levelsState
-
-    private var currentType: String = "" // тип алфавита Хирагана\Катакана
+@HiltViewModel
+class LevelsMenuViewModel @Inject constructor (
+    private val getAllLevelsByTypeUseCase: GetAllLevelsByTypeUseCase,
+    private val getLevelUseCase: GetLevelUseCase
+): ViewModel() {
 
     fun loadLevels(type: String) {
-        currentType = type
 
-        _levelsState.value = listOf(
-            Level(id = 1, title = "Level 1", japaneseChars = "a i u e o", isUnlocked = true),
-            Level(id = 2, title = "Level 2", japaneseChars = "ka ki ku ke ko"),
-            Level(id = 3, title = "Level 3", japaneseChars = "sa si su se so"),
-        )
+
+
     }
 }
 

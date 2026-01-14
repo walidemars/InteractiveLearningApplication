@@ -48,7 +48,7 @@ fun LevelsMenuScreen(
         LevelsMenuViewModel(context)
     },
     type: String, // Hiragana or Katakana
-    onLevelClick: (levelId: Int) -> Unit,
+    onLevelClick: (levelId: String) -> Unit,
     onBackClick: () -> Unit
 ) {
 

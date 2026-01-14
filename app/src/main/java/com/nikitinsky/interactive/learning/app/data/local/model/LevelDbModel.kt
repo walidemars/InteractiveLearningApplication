@@ -1,8 +1,12 @@
-package com.nikitinsky.interactive.learning.app.domain.model
+package com.nikitinsky.interactive.learning.app.data.local.model
 
+import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.nikitinsky.interactive.learning.app.domain.model.KanaType
 
-data class Level(
+@Entity(tableName = "levels")
+data class LevelDbModel(
+    @PrimaryKey(autoGenerate = true)
     val id: Int,
     val title: String,
     val kanaIds: List<Int>, // каны входящие в уровень

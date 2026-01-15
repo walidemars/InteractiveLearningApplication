@@ -4,8 +4,9 @@ import com.nikitinsky.interactive.learning.app.domain.model.KanaSymbol
 import com.nikitinsky.interactive.learning.app.domain.model.KanaType
 import com.nikitinsky.interactive.learning.app.domain.repository.KanaRepository
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class GetAllKanaByTypeUseCase(
+class GetAllKanaByTypeUseCase @Inject constructor (
     private val repository: KanaRepository
 ) {
     operator fun invoke(kanaType: KanaType): Flow<List<KanaSymbol>> {

@@ -15,7 +15,7 @@ fun KanaSymbolDbModel.toEntity(): KanaSymbol {
     return KanaSymbol(id, japaneseChar, romaji, type, levelId)
 }
 
-fun List<KanaSymbolDbModel>.toEntities(): List<KanaSymbol> {
+fun List<KanaSymbolDbModel>.toKanaEntities(): List<KanaSymbol> {
     return map { it.toEntity() }
 }
 
@@ -27,19 +27,33 @@ fun WordDbModel.toEntity(): Word {
     return Word(id, kanji, kana, translation, levelId)
 }
 
-fun List<WordDbModel>.toEntities(): List<Word> {
+fun List<WordDbModel>.toWordEntities(): List<Word> {
     return map { it.toEntity() }
 }
 
 fun Level.toDbModel(): LevelDbModel {
-    return LevelDbModel(id, title, kanaIds, wordIds, isUnlocked, kanaType)
+    return LevelDbModel(
+        id = id,
+        title = title,
+        kanaIds = kanaIds.joinToString(" "),
+        wordIds = wordIds.joinToString(" "),
+        isUnlocked = isUnlocked,
+        kanaType = kanaType
+    )
 }
 
 fun LevelDbModel.toEntity(): Level {
-    return Level(id, title, kanaIds, wordIds, isUnlocked, kanaType)
+    return Level(
+        id,
+        title,
+        kanaIds.split(" ").map { it.toInt() },
+        wordIds.split(" ").map { it.toInt() },
+        isUnlocked,
+        kanaType
+    )
 }
 
-fun List<LevelDbModel>.toEntities(): List<Level> {
+fun List<LevelDbModel>.toLevelEntities(): List<Level> {
     return map { it.toEntity() }
 }
 

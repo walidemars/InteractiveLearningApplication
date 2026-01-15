@@ -6,8 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.nikitinsky.interactive.learning.app.presentation.screens.level_details.LevelDetailsScreen
-import com.nikitinsky.interactive.learning.app.presentation.screens.levels_menu.LevelsMenuScreen
+import com.nikitinsky.interactive.learning.app.domain.model.KanaType
 import com.nikitinsky.interactive.learning.app.presentation.screens.main_menu.MainMenuScreen
 
 @Composable
@@ -19,58 +18,26 @@ fun NavGraph(){
         navController = navController,
         startDestination = Screen.MainMenu.route
     ) {
-        composable(Screen.MainMenu.route) {
+        composable(
+            Screen.MainMenu.route
+        ) {
             MainMenuScreen(
-                onNavigateToHiragana = {
-                    navController.navigate(Screen.LevelsMenu.createRoute("hiragana"))
+                onNavigateToHiraganaClick = {
+                    navController.navigate(Screen.LevelsMenu.createRoute(KanaType.HIRAGANA))
                 },
-                onNavigateToKatakana = {
-                    navController.navigate(Screen.LevelsMenu.createRoute("katakana"))
+                onNavigateToKatakanaClick = {
+                    navController.navigate(Screen.LevelsMenu.createRoute(KanaType.KATAKANA))
                 },
-                onNavigateToKanji = {
-
+                onNavigateToKanjiClick = {
+                    navController.navigate(Screen.KanjiMenu.route)
                 },
-                onNavigateToSettings = {
-
+                onNavigateToSettingsClick = {
+                    navController.navigate(Screen.Settings.route)
                 },
-                onNavigateToExit = {
-
-                }
-            )
-        }
-        composable(
-            route = Screen.LevelsMenu.route,
-            arguments = listOf(navArgument("type") { type = NavType.StringType})
-        ) { backStackEntry ->
-            val alphabetType = backStackEntry.arguments?.getString("type")
-                ?: "hiragana"
-
-            LevelsMenuScreen(
-                type = alphabetType,
-                onLevelClick = { levelId ->
-                    navController.navigate(Screen.LevelDetails.createRoute(levelId))
-                },
-                onBackClick = {
+                onNavigateToExitClick = {
                     navController.popBackStack()
                 }
             )
-        }
-        composable(
-            route = Screen.LevelDetails.route,
-            arguments = listOf(navArgument("levelId") { type = NavType.StringType})
-        ) { backStackEntry ->
-            val levelId = backStackEntry.arguments?.getString("levelId")
-
-            LevelDetailsScreen(
-                levelId = levelId,
-                onBackClick = {
-                    navController.popBackStack()
-                }
-            )
-
-        }
-        composable(Screen.Settings.route) {
-
         }
     }
 }
@@ -81,8 +48,10 @@ sealed class Screen(val route: String) {
 
     data object LevelsMenu: Screen("levels_menu/{type}") {
 
-        fun createRoute(type: String) = "levels_menu/$type"
+        fun createRoute(type: KanaType) = "levels_menu/$type"
     }
+
+    data object KanjiMenu: Screen("kanji_menu")
 
     data object LevelDetails: Screen("level_details/{levelId}") {
 

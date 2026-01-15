@@ -8,9 +8,11 @@ import com.nikitinsky.interactive.learning.app.data.local.dao.WordDao
 import com.nikitinsky.interactive.learning.app.data.local.database.Database
 import com.nikitinsky.interactive.learning.app.data.repository.KanaRepositoryImpl
 import com.nikitinsky.interactive.learning.app.data.repository.LevelsRepositoryImpl
+import com.nikitinsky.interactive.learning.app.data.repository.MenuRepositoryImpl
 import com.nikitinsky.interactive.learning.app.data.repository.WordsRepositoryImpl
 import com.nikitinsky.interactive.learning.app.domain.repository.KanaRepository
 import com.nikitinsky.interactive.learning.app.domain.repository.LevelsRepository
+import com.nikitinsky.interactive.learning.app.domain.repository.MenuRepository
 import com.nikitinsky.interactive.learning.app.domain.repository.WordsRepository
 import dagger.Binds
 import dagger.Module
@@ -41,6 +43,12 @@ interface DataModule {
     fun bindLevelsRepository(
         levelsImpl: LevelsRepositoryImpl
     ): LevelsRepository
+
+    @Singleton
+    @Binds
+    fun bindMenuRepository(
+        menuImpl: MenuRepositoryImpl
+    ): MenuRepository
 
     companion object {
 

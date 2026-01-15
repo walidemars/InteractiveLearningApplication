@@ -1,8 +1,9 @@
 package com.nikitinsky.interactive.learning.app.domain.usecase
 
 import com.nikitinsky.interactive.learning.app.domain.repository.KanaRepository
+import javax.inject.Inject
 
-class CheckAnswerUseCase(
+class CheckAnswerUseCase @Inject constructor (
     private val repository: KanaRepository
 ) {
 

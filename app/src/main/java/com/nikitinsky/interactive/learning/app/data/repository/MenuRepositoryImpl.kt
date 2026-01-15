@@ -2,7 +2,7 @@ package com.nikitinsky.interactive.learning.app.data.repository
 
 import com.nikitinsky.interactive.learning.app.domain.model.MainMenuItem
 import com.nikitinsky.interactive.learning.app.domain.repository.MenuRepository
-import jakarta.inject.Inject
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

@@ -2,8 +2,9 @@ package com.nikitinsky.interactive.learning.app.domain.usecase
 
 import com.nikitinsky.interactive.learning.app.domain.model.Word
 import com.nikitinsky.interactive.learning.app.domain.repository.WordsRepository
+import javax.inject.Inject
 
-class GetWordByIdUseCase(
+class GetWordByIdUseCase @Inject constructor (
     private val repository: WordsRepository
 ) {
     operator fun invoke(wordId: Int): Word {

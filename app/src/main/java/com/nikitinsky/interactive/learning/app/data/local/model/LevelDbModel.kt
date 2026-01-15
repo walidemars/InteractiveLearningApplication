@@ -9,8 +9,8 @@ data class LevelDbModel(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     val title: String,
-    val kanaIds: List<Int>, // каны входящие в уровень
-    val wordIds: List<Int>, // слова входящие в уровень
+    val kanaIds: String, // каны входящие в уровень
+    val wordIds: String, // слова входящие в уровень
     val isUnlocked: Boolean = false,
     val kanaType: KanaType
 )

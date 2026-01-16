@@ -74,11 +74,11 @@ fun MainMenuScreen(
                     title = it.title,
                     onClick = {
                         when(it) {
-                            MainMenuItem.HIRAGANA -> onNavigateToHiraganaClick
-                            MainMenuItem.KATAKANA -> onNavigateToKatakanaClick
-                            MainMenuItem.KANJI -> onNavigateToKanjiClick
-                            MainMenuItem.SETTINGS -> onNavigateToSettingsClick
-                            MainMenuItem.EXIT -> onNavigateToExitClick
+                            MainMenuItem.HIRAGANA -> onNavigateToHiraganaClick()
+                            MainMenuItem.KATAKANA -> onNavigateToKatakanaClick()
+                            MainMenuItem.KANJI -> onNavigateToKanjiClick()
+                            MainMenuItem.SETTINGS -> onNavigateToSettingsClick()
+                            MainMenuItem.EXIT -> onNavigateToExitClick()
                         }
                     }
                 )

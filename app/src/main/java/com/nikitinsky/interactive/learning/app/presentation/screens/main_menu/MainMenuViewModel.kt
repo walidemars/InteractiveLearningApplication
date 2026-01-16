@@ -35,40 +35,40 @@ class MainMenuViewModel @Inject constructor (
             .launchIn(viewModelScope)
     }
 
-    fun processCommand(command: MainMenuCommand) {
-        viewModelScope.launch {
-            when(command) {
-                is MainMenuCommand.NavigateToExit -> {
-
-                }
-                is MainMenuCommand.NavigateToHiragana -> {
-
-                }
-                is MainMenuCommand.NavigateToKanji -> {
-
-                }
-                is MainMenuCommand.NavigateToKatakana -> {
-
-                }
-                is MainMenuCommand.NavigateToSettings -> {
-
-                }
-            }
-        }
-    }
+//    fun processCommand(command: MainMenuCommand) {
+//        viewModelScope.launch {
+//            when(command) {
+//                is MainMenuCommand.NavigateToExit -> {
+//
+//                }
+//                is MainMenuCommand.NavigateToHiragana -> {
+//
+//                }
+//                is MainMenuCommand.NavigateToKanji -> {
+//
+//                }
+//                is MainMenuCommand.NavigateToKatakana -> {
+//
+//                }
+//                is MainMenuCommand.NavigateToSettings -> {
+//
+//                }
+//            }
+//        }
+//    }
 }
 
-sealed interface MainMenuCommand {
-    data class NavigateToHiragana(val mainMenuItem: MainMenuItem): MainMenuCommand
-
-    data class NavigateToKatakana(val mainMenuItem: MainMenuItem): MainMenuCommand
-
-    data class NavigateToKanji(val mainMenuItem: MainMenuItem): MainMenuCommand
-
-    data class NavigateToSettings(val mainMenuItem: MainMenuItem): MainMenuCommand
-
-    data class NavigateToExit(val mainMenuItem: MainMenuItem): MainMenuCommand
-}
+//sealed interface MainMenuCommand {
+//    data class NavigateToHiragana(val mainMenuItem: MainMenuItem): MainMenuCommand
+//
+//    data class NavigateToKatakana(val mainMenuItem: MainMenuItem): MainMenuCommand
+//
+//    data class NavigateToKanji(val mainMenuItem: MainMenuItem): MainMenuCommand
+//
+//    data class NavigateToSettings(val mainMenuItem: MainMenuItem): MainMenuCommand
+//
+//    data class NavigateToExit(val mainMenuItem: MainMenuItem): MainMenuCommand
+//}
 
 data class MainMenuScreenState(
     val mainMenuItems: List<MainMenuItem> = listOf()

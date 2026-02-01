@@ -1,14 +1,13 @@
 package com.nikitinsky.interactive.learning.app.domain.repository
 
-import com.nikitinsky.interactive.learning.app.domain.model.KanaSymbol
-import com.nikitinsky.interactive.learning.app.domain.model.KanaType
+import com.nikitinsky.interactive.learning.app.domain.entity.Kana
+import com.nikitinsky.interactive.learning.app.domain.entity.KanaType
+import com.nikitinsky.interactive.learning.app.domain.entity.Level
 import kotlinx.coroutines.flow.Flow
 
 interface KanaRepository {
 
-    fun getKanaById(kanaId: Int): KanaSymbol
+    fun getKanaForLevel(levelId: Int): Flow<List<Kana>>
 
-    fun getAllKanaByType(kanaType: KanaType): Flow<List<KanaSymbol>>
-
-    fun getKanaForLevel(levelId: Int): Flow<List<KanaSymbol>>
+    fun getLevelsByKanaType(kanaType: KanaType): Flow<List<Level>>
 }

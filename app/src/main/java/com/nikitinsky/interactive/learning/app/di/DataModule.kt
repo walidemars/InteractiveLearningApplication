@@ -34,7 +34,7 @@ interface DataModule {
                 klass = KanaDatabase::class.java,
                 name = "japanese_learning.db"
             )
-                .createFromAsset("")
+                .createFromAsset("databases/japanese.db")
                 .build()
         }
 

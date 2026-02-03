@@ -9,9 +9,11 @@ import com.nikitinsky.interactive.learning.app.domain.entity.KanaType
     primaryKeys = ["romaji", "kanaType"],
     foreignKeys = [
         ForeignKey(
-        entity = LevelDbModel::class,
-        parentColumns = ["id"],
-        childColumns = ["levelId"],
+            entity = LevelDbModel::class,
+            parentColumns = ["id"],
+            childColumns = ["levelId"],
+            onDelete = ForeignKey.CASCADE,
+            onUpdate = ForeignKey.CASCADE
         )
     ]
 )

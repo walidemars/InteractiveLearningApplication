@@ -1,6 +1,7 @@
 package com.nikitinsky.interactive.learning.app.data.repository
 
 import com.nikitinsky.interactive.learning.app.data.local.dao.KanaDao
+import com.nikitinsky.interactive.learning.app.data.mapper.toEntity
 import com.nikitinsky.interactive.learning.app.data.mapper.toKanaEntities
 import com.nikitinsky.interactive.learning.app.data.mapper.toLevelEntities
 import com.nikitinsky.interactive.learning.app.domain.entity.Kana
@@ -20,5 +21,9 @@ class KanaRepositoryImpl @Inject constructor(
 
     override fun getLevelsByKanaType(kanaType: KanaType): Flow<List<Level>> {
         return kanaDao.getLevelsByKanaType(kanaType).map { it.toLevelEntities() }
+    }
+
+    override fun getLevel(levelId: Int): Level {
+        return kanaDao.getLevel(levelId).toEntity()
     }
 }

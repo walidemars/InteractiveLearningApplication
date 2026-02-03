@@ -10,4 +10,6 @@ interface KanaRepository {
     fun getKanaForLevel(levelId: Int): Flow<List<Kana>>
 
     fun getLevelsByKanaType(kanaType: KanaType): Flow<List<Level>>
+
+    fun getLevel(levelId: Int): Level
 }

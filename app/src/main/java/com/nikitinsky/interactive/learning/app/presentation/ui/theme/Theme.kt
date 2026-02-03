@@ -14,14 +14,15 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = RedJapan,
-    secondary = Gray100,
-    onBackground = Gray300,
-    background = Blue100,
-    surface = Yellow100,
-    surfaceVariant = Yellow200,
-    onSurface = Gray300,
-    onSurfaceVariant = Gray200,
+    primary = Brown100,
+    secondary = Green100,
+    onBackground = Grey500,
+    background = Grey100,
+    surface = Grey200,
+    surfaceVariant = Grey300,
+    onSurface = Grey500,
+    onSurfaceVariant = Grey400,
+    tertiary = RedJapan,
     onTertiary = White
 
 

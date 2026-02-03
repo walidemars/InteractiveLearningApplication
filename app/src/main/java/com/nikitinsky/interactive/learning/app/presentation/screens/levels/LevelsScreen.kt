@@ -1,8 +1,6 @@
 package com.nikitinsky.interactive.learning.app.presentation.screens.levels
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,17 +19,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.nikitinsky.interactive.learning.app.R
 import com.nikitinsky.interactive.learning.app.domain.entity.Level
-import com.nikitinsky.interactive.learning.app.presentation.ui.theme.RedJapan
-import java.nio.file.WatchEvent
 
 @Composable
 fun LevelsScreen(
@@ -39,7 +33,8 @@ fun LevelsScreen(
     viewModel: LevelsViewModel = hiltViewModel()
 ) {
     Scaffold(
-        modifier = modifier
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.background
     ) { innerPadding ->
         val state by viewModel.state.collectAsState()
         LazyColumn(
@@ -53,23 +48,20 @@ fun LevelsScreen(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val disabledButtonColors = ButtonDefaults.buttonColors()
-                    Button(
+                    KanaTypeButton(
+                        text = stringResource(R.string.hiragana),
+                        enabled = state.isHiragana,
                         onClick = {
                             viewModel.processCommand(LevelsCommand.SwitchKanaType)
-                        },
-                        enabled = state.isHiragana
-                    ) {
-                        Text(text = stringResource(R.string.hiragana))
-                    }
-                    Button(
+                        }
+                    )
+                    KanaTypeButton(
+                        text = stringResource(R.string.katakana),
+                        enabled = !state.isHiragana,
                         onClick = {
                             viewModel.processCommand(LevelsCommand.SwitchKanaType)
-                        },
-                        enabled = !state.isHiragana
-                    ) {
-                        Text(text = stringResource(R.string.katakana))
-                    }
+                        }
+                    )
                 }
             }
             items(
@@ -81,6 +73,30 @@ fun LevelsScreen(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun KanaTypeButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    enabled: Boolean,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = {
+            onClick()
+        },
+        enabled = enabled,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.secondary
+        )
+    ) {
+        Text(
+            text = text,
+            fontSize = 20.sp,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
@@ -113,14 +129,16 @@ fun LevelCard(
                 text = title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                fontSize = 20.sp
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 text = subtitle,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                fontSize = 18.sp
+                fontSize = 18.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

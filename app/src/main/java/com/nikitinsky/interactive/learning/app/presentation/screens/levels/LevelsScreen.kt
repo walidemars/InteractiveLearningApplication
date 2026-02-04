@@ -1,5 +1,6 @@
 package com.nikitinsky.interactive.learning.app.presentation.screens.levels
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,7 +31,8 @@ import com.nikitinsky.interactive.learning.app.domain.entity.Level
 @Composable
 fun LevelsScreen(
     modifier: Modifier = Modifier,
-    viewModel: LevelsViewModel = hiltViewModel()
+    viewModel: LevelsViewModel = hiltViewModel(),
+    onLevelClick: (Level) -> Unit
 ) {
     Scaffold(
         modifier = modifier,
@@ -69,7 +71,8 @@ fun LevelsScreen(
                 key = { it.id }
             ) {
                 LevelCard(
-                    level = it
+                    level = it,
+                    onLevelClick = onLevelClick
                 )
             }
         }
@@ -95,7 +98,6 @@ fun KanaTypeButton(
         Text(
             text = text,
             fontSize = 20.sp,
-            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }
@@ -103,10 +105,14 @@ fun KanaTypeButton(
 @Composable
 fun LevelCard(
     modifier: Modifier = Modifier,
-    level: Level
+    level: Level,
+    onLevelClick: (Level) -> Unit
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth()
+            .clickable {
+                onLevelClick(level)
+            },
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface

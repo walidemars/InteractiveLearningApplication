@@ -23,7 +23,7 @@ class KanaRepositoryImpl @Inject constructor(
         return kanaDao.getLevelsByKanaType(kanaType).map { it.toLevelEntities() }
     }
 
-    override fun getLevel(levelId: Int): Level {
+    override suspend fun getLevel(levelId: Int): Level {
         return kanaDao.getLevel(levelId).toEntity()
     }
 }

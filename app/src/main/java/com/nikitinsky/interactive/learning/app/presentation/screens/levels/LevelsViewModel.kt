@@ -45,9 +45,6 @@ class LevelsViewModel @Inject constructor(
 
     fun processCommand(command: LevelsCommand) {
         when(command) {
-            is LevelsCommand.ClickLevel -> {
-                //getLevelUseCase()
-            }
             is LevelsCommand.SwitchKanaType -> {
                 _state.update { previousState ->
                     val currentKanaType = previousState.kanaType
@@ -63,8 +60,6 @@ class LevelsViewModel @Inject constructor(
 }
 
 sealed interface LevelsCommand {
-
-    data class ClickLevel(val levelId: Int): LevelsCommand
 
     data object SwitchKanaType: LevelsCommand
 }

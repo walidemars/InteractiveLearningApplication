@@ -18,5 +18,5 @@ interface KanaDao {
     fun getLevelsByKanaType(kanaType: KanaType): Flow<List<LevelWithKanaDbModel>>
 
     @Query("SELECT * FROM levels WHERE id == :levelId")
-    fun getLevel(levelId: Int): LevelWithKanaDbModel
+    suspend fun getLevel(levelId: Int): LevelWithKanaDbModel
 }

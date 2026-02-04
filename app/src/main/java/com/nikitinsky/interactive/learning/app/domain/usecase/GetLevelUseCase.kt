@@ -6,6 +6,6 @@ import javax.inject.Inject
 class GetLevelUseCase @Inject constructor(
     private val kanaRepository: KanaRepository
 ){
-    operator fun invoke(levelId: Int) =
+    suspend operator fun invoke(levelId: Int) =
         kanaRepository.getLevel(levelId)
 }

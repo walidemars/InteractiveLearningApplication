@@ -11,5 +11,5 @@ interface KanaRepository {
 
     fun getLevelsByKanaType(kanaType: KanaType): Flow<List<Level>>
 
-    fun getLevel(levelId: Int): Level
+    suspend fun getLevel(levelId: Int): Level
 }

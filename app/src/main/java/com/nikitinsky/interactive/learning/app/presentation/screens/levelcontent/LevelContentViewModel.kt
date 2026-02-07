@@ -1,5 +1,6 @@
 package com.nikitinsky.interactive.learning.app.presentation.screens.levelcontent
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nikitinsky.interactive.learning.app.domain.entity.Kana
@@ -26,9 +27,14 @@ class LevelContentViewModel @AssistedInject constructor(
         viewModelScope.launch {
             val currentLevel = getLevelUseCase(levelId)
             _state.update { previousState ->
+                val symbols = (currentLevel.kanaList + currentLevel.kanaList + currentLevel.kanaList)
+                    .map { it.japaneseSymbol }
+                    .shuffled()
+
                 previousState.copy(
                     kanaList = currentLevel.kanaList,
-                    showedKana = currentLevel.kanaList.firstOrNull()
+                    showedKana = currentLevel.kanaList.firstOrNull(),
+                    miniGameList = symbols
                 )
             }
         }
@@ -39,16 +45,42 @@ class LevelContentViewModel @AssistedInject constructor(
             LevelContentCommand.ShowNextKana -> {
                 _state.update { previousState ->
                     val showedKanaIndex = previousState.kanaList.indexOf(previousState.showedKana)
-                    previousState.copy(showedKana = previousState.kanaList[showedKanaIndex + 1])
+                    previousState.copy(
+                        showedKana = previousState.kanaList[showedKanaIndex + 1],
+                        miniGameList = updatedMiniGameList(),
+                        answeredKana = mapOf()
+                    )
                 }
             }
             LevelContentCommand.ShowPreviousKana -> {
                 _state.update { previousState ->
                     val showedKanaIndex = previousState.kanaList.indexOf(previousState.showedKana)
-                    previousState.copy(showedKana = previousState.kanaList[showedKanaIndex - 1])
+                    previousState.copy(
+                        showedKana = previousState.kanaList[showedKanaIndex - 1],
+                        miniGameList = updatedMiniGameList(),
+                        answeredKana = mapOf()
+                    )
+                }
+            }
+
+            is LevelContentCommand.CheckKana -> {
+                _state.update { previousState ->
+                    val isCorrect = command.kanaJpSymbol == previousState.showedKana?.japaneseSymbol
+                    val newAnswers = previousState.answeredKana.toMutableMap()
+                    newAnswers[command.index] = isCorrect
+                    previousState.copy(
+                        answeredKana = newAnswers
+                    )
                 }
             }
         }
+    }
+
+    fun updatedMiniGameList(): List<String> {
+        val list = _state.value.kanaList
+        return (list + list + list)
+            .map { it.japaneseSymbol }
+            .shuffled()
     }
 
     @AssistedFactory
@@ -64,9 +96,14 @@ sealed interface LevelContentCommand {
     data object ShowNextKana: LevelContentCommand
 
     data object ShowPreviousKana: LevelContentCommand
+
+    data class CheckKana(val index: Int, val kanaJpSymbol: String): LevelContentCommand
 }
 
 data class LevelContentState(
     val kanaList: List<Kana> = listOf(),
-    val showedKana: Kana? = null
+    val showedKana: Kana? = null,
+    val selectedGameKana: String = "",
+    val answeredKana: Map<Int, Boolean> = mapOf(),
+    val miniGameList: List<String> = listOf()
 )

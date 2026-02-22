@@ -32,12 +32,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.nikitinsky.interactive.learning.app.domain.entity.Level
 
 @Composable
 fun LevelContentScreen(
     modifier: Modifier = Modifier,
     levelId: Int,
     onBackClick: () -> Unit,
+    onPracticeClick: (Level) -> Unit,
     viewModel: LevelContentViewModel = hiltViewModel(
         creationCallback = { factory: LevelContentViewModel.Factory ->
             factory.create(levelId)
@@ -187,7 +189,7 @@ fun LevelContentScreen(
                 modifier = Modifier
                     .padding(16.dp),
                 onClick = {
-
+                    state.currentLevel?.let { onPracticeClick(it) }
                 },
             ) {
                 Text(text = "Go to practice")

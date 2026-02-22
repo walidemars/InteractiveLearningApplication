@@ -4,9 +4,11 @@ import com.nikitinsky.interactive.learning.app.data.local.dao.KanaDao
 import com.nikitinsky.interactive.learning.app.data.mapper.toEntity
 import com.nikitinsky.interactive.learning.app.data.mapper.toKanaEntities
 import com.nikitinsky.interactive.learning.app.data.mapper.toLevelEntities
+import com.nikitinsky.interactive.learning.app.data.mapper.toWordEntities
 import com.nikitinsky.interactive.learning.app.domain.entity.Kana
 import com.nikitinsky.interactive.learning.app.domain.entity.KanaType
 import com.nikitinsky.interactive.learning.app.domain.entity.Level
+import com.nikitinsky.interactive.learning.app.domain.entity.Word
 import com.nikitinsky.interactive.learning.app.domain.repository.KanaRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -25,5 +27,9 @@ class KanaRepositoryImpl @Inject constructor(
 
     override suspend fun getLevel(levelId: Int): Level {
         return kanaDao.getLevel(levelId).toEntity()
+    }
+
+    override fun getWordsForLevel(levelId: Int): Flow<List<Word>> {
+        return kanaDao.getWordsForLevel(levelId).map { it.toWordEntities() }
     }
 }

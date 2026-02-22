@@ -35,6 +35,7 @@ interface DataModule {
                 name = "japanese_learning.db"
             )
                 .createFromAsset("databases/japanese.db")
+                .fallbackToDestructiveMigration(true)
                 .build()
         }
 

@@ -3,8 +3,10 @@ package com.nikitinsky.interactive.learning.app.data.mapper
 import com.nikitinsky.interactive.learning.app.data.local.model.KanaDbModel
 import com.nikitinsky.interactive.learning.app.data.local.model.LevelDbModel
 import com.nikitinsky.interactive.learning.app.data.local.model.LevelWithKanaDbModel
+import com.nikitinsky.interactive.learning.app.data.local.model.WordDbModel
 import com.nikitinsky.interactive.learning.app.domain.entity.Kana
 import com.nikitinsky.interactive.learning.app.domain.entity.Level
+import com.nikitinsky.interactive.learning.app.domain.entity.Word
 
 fun KanaDbModel.toEntity(): Kana {
     return Kana(japaneseSymbol, romaji, kanaType, levelId)
@@ -13,10 +15,6 @@ fun KanaDbModel.toEntity(): Kana {
 fun List<KanaDbModel>.toKanaEntities(): List<Kana> {
     return map { it.toEntity() }
 }
-
-//fun LevelDbModel.toEntity(): Level {
-//    return Level(id, kanaList, kanaType)
-//}
 
 fun LevelWithKanaDbModel.toEntity(): Level {
     return Level(
@@ -27,5 +25,17 @@ fun LevelWithKanaDbModel.toEntity(): Level {
 }
 
 fun List<LevelWithKanaDbModel>.toLevelEntities(): List<Level> {
+    return map { it.toEntity() }
+}
+
+fun WordDbModel.toEntity(): Word {
+    return Word(
+        word = word,
+        romaji = romaji,
+        levelId = levelId
+    )
+}
+
+fun List<WordDbModel>.toWordEntities(): List<Word> {
     return map { it.toEntity() }
 }

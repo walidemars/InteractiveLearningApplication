@@ -5,10 +5,11 @@ import androidx.room.RoomDatabase
 import com.nikitinsky.interactive.learning.app.data.local.dao.KanaDao
 import com.nikitinsky.interactive.learning.app.data.local.model.KanaDbModel
 import com.nikitinsky.interactive.learning.app.data.local.model.LevelDbModel
+import com.nikitinsky.interactive.learning.app.data.local.model.WordDbModel
 
 @Database(
-    entities = [KanaDbModel::class, LevelDbModel::class],
-    version = 1,
+    entities = [KanaDbModel::class, LevelDbModel::class, WordDbModel::class],
+    version = 2,
     exportSchema = false
 )
 abstract class KanaDatabase: RoomDatabase() {

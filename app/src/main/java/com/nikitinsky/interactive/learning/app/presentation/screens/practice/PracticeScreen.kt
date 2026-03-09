@@ -5,6 +5,7 @@ package com.nikitinsky.interactive.learning.app.presentation.screens.practice
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -112,15 +114,21 @@ fun PracticeScreen(
                 Text(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
-                        .padding(16.dp),
-                    text = "Find: ${currentState.targetKana?.romaji}"
+                        .padding(40.dp),
+                    text = "Find: ${currentState.targetKana?.romaji}",
+                    fontSize = 60.sp
                 )
 
                 Canvas(
                     modifier = Modifier
                         .fillMaxSize()
+                        .onSizeChanged { size ->
+                            viewModel.setDimensions(size.width.toFloat())
+                        }
                         .pointerInput(Unit) {
-
+                            detectTapGestures { offset ->
+                                viewModel.onScreenTap(offset.x, offset.y)
+                            }
                         }
                 ) {
                     currentState.spawnedSymbols.forEach { fallingSymbol ->
@@ -129,9 +137,10 @@ fun PracticeScreen(
                             fallingSymbol.x,
                             fallingSymbol.y,
                             Paint().apply {
-                                textSize = 80f
+                                textSize = 160f
                                 color = Color.Black.toArgb()
                                 textAlign = Paint.Align.CENTER
+                                isAntiAlias = true
                             }
                         )
                     }

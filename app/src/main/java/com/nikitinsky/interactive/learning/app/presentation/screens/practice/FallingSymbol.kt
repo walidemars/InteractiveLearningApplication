@@ -5,6 +5,6 @@ import kotlin.random.Random
 
 data class FallingSymbol(
     val kana: Kana,
-    val x: Float = Random.nextFloat() * 800f,
-    val y: Float = -100f
+    val x: Float,
+    val y: Float
 )

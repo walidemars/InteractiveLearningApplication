@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlin.math.abs
+import kotlin.random.Random
 
 @HiltViewModel(assistedFactory = PracticeViewModel.Factory::class)
 class PracticeViewModel @AssistedInject constructor(
@@ -26,8 +28,10 @@ class PracticeViewModel @AssistedInject constructor(
 
     private val _state = MutableStateFlow<PracticeState>(PracticeState.FirstGame())
     val state = _state.asStateFlow()
+
     private var kanaList: List<Kana> = emptyList()
     private var firstSelection: Pair<Kana, Boolean>? = null
+    private var screenWidth = 0f
 
     private val MAX_ROUNDS = 1
 
@@ -202,32 +206,59 @@ class PracticeViewModel @AssistedInject constructor(
                         currentState
                     }
                 }
-                delay(16)
+                delay(16) // ~60fps
             }
         }
         viewModelScope.launch {
             while (isActive) {
                 spawnSymbol()
-                delay(2000)
+                delay(1000)
             }
         }
     }
 
     private fun spawnSymbol() {
+        if (screenWidth <= 0) return
+
         _state.update { currentState ->
             if (currentState is PracticeState.SecondGame) {
                 val newSymbol = FallingSymbol(
-                    kana = kanaList.random()
+                    kana = kanaList.random(),
+                    x = Random.nextFloat() * (screenWidth - 100f) + 50f,
+                    y = -100f
                 )
-                val oldList = currentState.spawnedSymbols
+                val newList = currentState.spawnedSymbols + newSymbol
                 currentState.copy(
-                    spawnedSymbols = oldList + newSymbol
+                    spawnedSymbols = newList
                 )
             } else {
                 currentState
             }
         }
+    }
 
+    fun onScreenTap(tapX: Float, tapY: Float) {
+        _state.update { currentState ->
+            if (currentState is PracticeState.SecondGame) {
+                val clicked = currentState.spawnedSymbols.find {
+                    abs(it.x - tapX) < 100 && abs(it.y - tapY) < 100
+                }
+                clicked?.let {
+                    if (clicked.kana.japaneseSymbol == currentState.targetKana?.japaneseSymbol) {
+                        val newList: List<FallingSymbol> = currentState.spawnedSymbols - clicked
+                        currentState.copy(spawnedSymbols = newList)
+                    } else {
+                        currentState
+                    }
+                } ?: currentState
+            } else {
+                currentState
+            }
+        }
+    }
+
+    fun setDimensions(width: Float) {
+        screenWidth = width
     }
 
     @AssistedFactory

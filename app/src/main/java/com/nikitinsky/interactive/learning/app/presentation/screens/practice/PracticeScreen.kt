@@ -2,6 +2,8 @@
 
 package com.nikitinsky.interactive.learning.app.presentation.screens.practice
 
+import android.graphics.Paint
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +27,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -99,13 +105,43 @@ fun PracticeScreen(
                 }
             }
         }
-        is PracticeState.FourthGame -> {
-
-        }
         is PracticeState.SecondGame -> {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(16.dp),
+                    text = "Find: ${currentState.targetKana?.romaji}"
+                )
 
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .pointerInput(Unit) {
+
+                        }
+                ) {
+                    currentState.spawnedSymbols.forEach { fallingSymbol ->
+                        drawContext.canvas.nativeCanvas.drawText(
+                            fallingSymbol.kana.japaneseSymbol,
+                            fallingSymbol.x,
+                            fallingSymbol.y,
+                            Paint().apply {
+                                textSize = 80f
+                                color = Color.Black.toArgb()
+                                textAlign = Paint.Align.CENTER
+                            }
+                        )
+                    }
+                }
+            }
         }
         is PracticeState.ThirdGame -> {
+
+        }
+        is PracticeState.FourthGame -> {
 
         }
     }
@@ -136,7 +172,7 @@ fun KanaCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .height(60.dp)
+            .height(120.dp)
             .clickable(enabled = kanaCardViewModel.status != ButtonStatus.CORRECT) {
                 onClick()
             },
@@ -146,7 +182,7 @@ fun KanaCard(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Text(text = text, fontSize = 20.sp)
+            Text(text = text, fontSize = 60.sp)
         }
     }
 }

@@ -15,6 +15,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 @HiltViewModel(assistedFactory = PracticeViewModel.Factory::class)
@@ -28,7 +29,7 @@ class PracticeViewModel @AssistedInject constructor(
     private var kanaList: List<Kana> = emptyList()
     private var firstSelection: Pair<Kana, Boolean>? = null
 
-    private val MAX_ROUNDS = 3
+    private val MAX_ROUNDS = 1
 
     init {
         viewModelScope.launch {
@@ -46,50 +47,48 @@ class PracticeViewModel @AssistedInject constructor(
 
     fun processCommand(command: PracticeCommand) {
         when(command) {
-            is PracticeCommand.CheckAnswer -> {
-                    when(val currentState = _state.value) {
-                        is PracticeState.FirstGame -> {
-                            if (command.selectKana.status == ButtonStatus.PRESSED || command.selectKana.status == ButtonStatus.CORRECT) return
+            is PracticeCommand.CheckAnswer -> when(val currentState = _state.value) {
+                is PracticeState.FirstGame -> {
+                    if (command.selectKana.status == ButtonStatus.PRESSED || command.selectKana.status == ButtonStatus.CORRECT) return
 
-                            val currentSelection = firstSelection
-                            if (currentSelection == null) {
-                                updateStatus(
-                                    command.selectKana.kana.japaneseSymbol,
-                                    command.isLeft,
-                                    ButtonStatus.PRESSED
-                                )
-                                firstSelection = command.selectKana.kana to command.isLeft
-                            } else {
-                                val (firstKana, firstIsLeft) = currentSelection
-                                if (firstIsLeft == command.isLeft) {
-                                    updateStatus(
-                                        firstKana.japaneseSymbol,
-                                        firstIsLeft,
-                                        ButtonStatus.NOT_PRESSED
-                                    )
-                                    updateStatus(
-                                        command.selectKana.kana.japaneseSymbol,
-                                        command.isLeft,
-                                        ButtonStatus.PRESSED
-                                    )
-                                    firstSelection = command.selectKana.kana to command.isLeft
-                                } else {
-                                    checkMatch(firstKana, command.selectKana.kana, firstIsLeft)
-                                    firstSelection = null
-                                }
-                            }
+                    val currentSelection = firstSelection
+                    if (currentSelection == null) {
+                        updateStatus(
+                            command.selectKana.kana.japaneseSymbol,
+                            command.isLeft,
+                            ButtonStatus.PRESSED
+                        )
+                        firstSelection = command.selectKana.kana to command.isLeft
+                    } else {
+                        val (firstKana, firstIsLeft) = currentSelection
+                        if (firstIsLeft == command.isLeft) {
+                            updateStatus(
+                                firstKana.japaneseSymbol,
+                                firstIsLeft,
+                                ButtonStatus.NOT_PRESSED
+                            )
+                            updateStatus(
+                                command.selectKana.kana.japaneseSymbol,
+                                command.isLeft,
+                                ButtonStatus.PRESSED
+                            )
+                            firstSelection = command.selectKana.kana to command.isLeft
+                        } else {
+                            checkMatch(firstKana, command.selectKana.kana, firstIsLeft)
+                            firstSelection = null
                         }
-                        is PracticeState.SecondGame -> {
-
-                        }
-                        is PracticeState.FourthGame -> {
-
-                        }
-                        is PracticeState.ThirdGame -> {
-
                     }
                 }
+                is PracticeState.SecondGame -> {
+
+                }
+                is PracticeState.FourthGame -> {
+
+                }
+                is PracticeState.ThirdGame -> {
+
             }
+        }
             PracticeCommand.StartFourthGame -> {
                 _state.update {
                     PracticeState.FourthGame(
@@ -100,8 +99,8 @@ class PracticeViewModel @AssistedInject constructor(
             }
             PracticeCommand.StartSecondGame -> {
                 _state.update {
+                    startGameLoop()
                     SecondGame(
-                        kanaList = kanaList,
                         targetKana = kanaList.randomOrNull()
                     )
                 }
@@ -114,7 +113,6 @@ class PracticeViewModel @AssistedInject constructor(
                     )
                 }
             }
-
         }
     }
 
@@ -143,6 +141,7 @@ class PracticeViewModel @AssistedInject constructor(
                     if (currentState.roundCount < MAX_ROUNDS) {
                         generateNewRound(currentState.roundCount + 1)
                     } else {
+                        processCommand(PracticeCommand.StartSecondGame)
                         PracticeState.SecondGame()
                     }
                 } else {
@@ -185,6 +184,52 @@ class PracticeViewModel @AssistedInject constructor(
        }
     }
 
+    private fun startGameLoop() {
+        Log.d("SecondGame", "Start game loop")
+        viewModelScope.launch {
+            while (isActive) {
+                _state.update { currentState ->
+                    if (currentState is PracticeState.SecondGame) {
+                        val newList = currentState.spawnedSymbols
+                            .map {
+                                it.copy(y = it.y + 5f)
+                            }
+                            .filter {
+                                it.y < 2000
+                            }
+                        currentState.copy(spawnedSymbols = newList)
+                    } else {
+                        currentState
+                    }
+                }
+                delay(16)
+            }
+        }
+        viewModelScope.launch {
+            while (isActive) {
+                spawnSymbol()
+                delay(2000)
+            }
+        }
+    }
+
+    private fun spawnSymbol() {
+        _state.update { currentState ->
+            if (currentState is PracticeState.SecondGame) {
+                val newSymbol = FallingSymbol(
+                    kana = kanaList.random()
+                )
+                val oldList = currentState.spawnedSymbols
+                currentState.copy(
+                    spawnedSymbols = oldList + newSymbol
+                )
+            } else {
+                currentState
+            }
+        }
+
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(
@@ -192,11 +237,6 @@ class PracticeViewModel @AssistedInject constructor(
         ): PracticeViewModel
     }
 }
-
-data class KanaCardViewModel(
-    val kana: Kana,
-    val status: ButtonStatus = ButtonStatus.NOT_PRESSED
-)
 
 sealed interface PracticeCommand {
 
@@ -219,7 +259,7 @@ sealed interface PracticeState {
     ): PracticeState
 
     data class SecondGame(
-        val kanaList: List<Kana> = listOf(),
+        val spawnedSymbols: List<FallingSymbol> = listOf(),
         val targetKana: Kana? = null
     ): PracticeState
 

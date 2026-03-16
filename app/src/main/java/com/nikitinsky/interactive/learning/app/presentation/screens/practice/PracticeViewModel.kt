@@ -11,14 +11,12 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlin.math.abs
-import kotlin.random.Random
 
 @HiltViewModel(assistedFactory = PracticeViewModel.Factory::class)
 class PracticeViewModel @AssistedInject constructor(
@@ -34,6 +32,10 @@ class PracticeViewModel @AssistedInject constructor(
     private var screenWidth = 0f
 
     private val MAX_ROUNDS = 1
+    private val MAX_KANA_TAP = 3
+
+    private var gameLoopJob: Job? = null;
+    private var spawnJob: Job? = null;
 
     init {
         viewModelScope.launch {
@@ -85,14 +87,15 @@ class PracticeViewModel @AssistedInject constructor(
                 }
                 is PracticeState.SecondGame -> {
 
+
                 }
                 is PracticeState.FourthGame -> {
 
                 }
                 is PracticeState.ThirdGame -> {
 
+                }
             }
-        }
             PracticeCommand.StartFourthGame -> {
                 _state.update {
                     PracticeState.FourthGame(
@@ -103,13 +106,20 @@ class PracticeViewModel @AssistedInject constructor(
             }
             PracticeCommand.StartSecondGame -> {
                 _state.update {
-                    startGameLoop()
-                    SecondGame(
-                        targetKana = kanaList.randomOrNull()
+                    PracticeState.SecondGame(
+                        targetKana = kanaList.first(),
+                        targetList = kanaList,
+                        showedList = (kanaList + kanaList + kanaList).map {
+                            KanaCardViewModel(
+                                kana = it
+                            )
+                        }.shuffled()
                     )
                 }
+
             }
             PracticeCommand.StartThirdGame -> {
+                Log.d("ThirdGame", "Start third game")
                 _state.update {
                     ThirdGame(
                         kanaList = kanaList,
@@ -185,80 +195,7 @@ class PracticeViewModel @AssistedInject constructor(
             } else {
                 currentState
             }
-       }
-    }
-
-    private fun startGameLoop() {
-        Log.d("SecondGame", "Start game loop")
-        viewModelScope.launch {
-            while (isActive) {
-                _state.update { currentState ->
-                    if (currentState is PracticeState.SecondGame) {
-                        val newList = currentState.spawnedSymbols
-                            .map {
-                                it.copy(y = it.y + 5f)
-                            }
-                            .filter {
-                                it.y < 2000
-                            }
-                        currentState.copy(spawnedSymbols = newList)
-                    } else {
-                        currentState
-                    }
-                }
-                delay(16) // ~60fps
-            }
         }
-        viewModelScope.launch {
-            while (isActive) {
-                spawnSymbol()
-                delay(1000)
-            }
-        }
-    }
-
-    private fun spawnSymbol() {
-        if (screenWidth <= 0) return
-
-        _state.update { currentState ->
-            if (currentState is PracticeState.SecondGame) {
-                val newSymbol = FallingSymbol(
-                    kana = kanaList.random(),
-                    x = Random.nextFloat() * (screenWidth - 100f) + 50f,
-                    y = -100f
-                )
-                val newList = currentState.spawnedSymbols + newSymbol
-                currentState.copy(
-                    spawnedSymbols = newList
-                )
-            } else {
-                currentState
-            }
-        }
-    }
-
-    fun onScreenTap(tapX: Float, tapY: Float) {
-        _state.update { currentState ->
-            if (currentState is PracticeState.SecondGame) {
-                val clicked = currentState.spawnedSymbols.find {
-                    abs(it.x - tapX) < 100 && abs(it.y - tapY) < 100
-                }
-                clicked?.let {
-                    if (clicked.kana.japaneseSymbol == currentState.targetKana?.japaneseSymbol) {
-                        val newList: List<FallingSymbol> = currentState.spawnedSymbols - clicked
-                        currentState.copy(spawnedSymbols = newList)
-                    } else {
-                        currentState
-                    }
-                } ?: currentState
-            } else {
-                currentState
-            }
-        }
-    }
-
-    fun setDimensions(width: Float) {
-        screenWidth = width
     }
 
     @AssistedFactory
@@ -290,7 +227,8 @@ sealed interface PracticeState {
     ): PracticeState
 
     data class SecondGame(
-        val spawnedSymbols: List<FallingSymbol> = listOf(),
+        val showedList: List<KanaCardViewModel> = listOf(),
+        val targetList: List<Kana> = listOf(),
         val targetKana: Kana? = null
     ): PracticeState
 

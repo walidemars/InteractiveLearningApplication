@@ -3,9 +3,7 @@
 package com.nikitinsky.interactive.learning.app.presentation.screens.practice
 
 import android.graphics.Paint
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
@@ -26,13 +26,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -49,6 +47,16 @@ fun PracticeScreen(
     )
 ) {
     val state = viewModel.state.collectAsState()
+
+    val paint = remember {
+        Paint().apply {
+            textSize = 160f
+            color = Color.Black.toArgb()
+            textAlign = Paint.Align.CENTER
+            isAntiAlias = true
+        }
+    }
+
     when(val currentState = state.value) {
         is PracticeState.FirstGame -> {
             Scaffold(
@@ -108,44 +116,52 @@ fun PracticeScreen(
             }
         }
         is PracticeState.SecondGame -> {
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(40.dp),
-                    text = "Find: ${currentState.targetKana?.romaji}",
-                    fontSize = 60.sp
-                )
-
-                Canvas(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .onSizeChanged { size ->
-                            viewModel.setDimensions(size.width.toFloat())
+            Scaffold(
+                modifier = modifier,
+                topBar = {
+                    TopAppBar(
+                        title = {
+                            Text(text = "Practice 1")
+                        },
+                        navigationIcon = {
+                            Icon(
+                                modifier = Modifier
+                                    .padding(start = 16.dp, end = 16.dp)
+                                    .clickable {
+                                        onBackClick()
+                                    },
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back"
+                            )
                         }
-                        .pointerInput(Unit) {
-                            detectTapGestures { offset ->
-                                viewModel.onScreenTap(offset.x, offset.y)
-                            }
-                        }
+                    )
+                }
+            ) { innerPadding ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(innerPadding),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    currentState.spawnedSymbols.forEach { fallingSymbol ->
-                        drawContext.canvas.nativeCanvas.drawText(
-                            fallingSymbol.kana.japaneseSymbol,
-                            fallingSymbol.x,
-                            fallingSymbol.y,
-                            Paint().apply {
-                                textSize = 160f
-                                color = Color.Black.toArgb()
-                                textAlign = Paint.Align.CENTER
-                                isAntiAlias = true
+                    Text(text = "Find \"${currentState.targetKana?.romaji ?: ""}\"")
+
+                    currentState.showedList.forEach { kanaCard ->
+                        LazyVerticalGrid(
+                            columns = GridCells.Adaptive(minSize = 30.dp)
+                        ) {
+                            item {
+                                KanaCard(
+                                    kanaCardViewModel = kanaCard,
+                                    text = kanaCard.kana.japaneseSymbol
+                                ) {
+
+                                }
                             }
-                        )
+                        }
                     }
                 }
             }
+
         }
         is PracticeState.ThirdGame -> {
 
